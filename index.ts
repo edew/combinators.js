@@ -32,10 +32,10 @@ export const character = (expected: string): Parser<string> => (
   return success([expected, input.slice(1)]);
 };
 
-export const and = <T>(
+export const and = <T, T2>(
   parser1: Parser<T>,
-  parser2: Parser<T>
-): Parser<Tuple<T, T>> => input => {
+  parser2: Parser<T2>
+): Parser<Tuple<T, T2>> => input => {
   const result1 = parser1(input);
 
   switch (result1.__tag) {
@@ -71,4 +71,16 @@ export const or = <T>(
 
 export const any = <T>(parsers: Parser<T>[]) => {
   return parsers.reduce(or);
+};
+
+export const map = <T, T2>(f: (value: T) => T2) => (
+  parser: Parser<T>
+): Parser<T2> => input => {
+  const result = parser(input);
+
+  if (result.__tag === SUCCESS) {
+    return success([f(result.value[0]), result.value[1]]);
+  }
+
+  return result;
 };
