@@ -103,3 +103,18 @@ export const apply = <T, T2>(parser1: Parser<(_: T) => T2>) => (
 export const lift2 = <A, B, C>(f: (_: A) => (_: B) => C) => (
   parser1: Parser<A>
 ) => (parser2: Parser<B>) => apply(apply(ret(f))(parser1))(parser2);
+
+export const sequence = <T>(parsers: Parser<T>[]): Parser<T[]> => {
+  const cons = <T>(head: T) => (tail: T[]) => [head].concat(tail);
+  const lifted = lift2(cons);
+
+  return parsers.length === 0
+    ? ret([])
+    : lifted(parsers[0])(sequence(parsers.slice(1)));
+};
+
+export const str = (expected: string): Parser<string> => {
+  return map((characters: string[]) => characters.join(""))(
+    sequence(expected.split("").map(character))
+  );
+};
