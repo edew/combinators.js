@@ -1,7 +1,7 @@
-import { SUCCESS, FAILURE, any, character } from "..";
+import { SUCCESS, FAILURE, choice, character } from "..";
 
 test("succeeds", () => {
-  const a_or_b_or_c = any([character("a"), character("b"), character("c")]);
+  const a_or_b_or_c = choice([character("a"), character("b"), character("c")]);
   expect(a_or_b_or_c("a")).toStrictEqual({
     __tag: SUCCESS,
     value: ["a", ""]
@@ -17,7 +17,7 @@ test("succeeds", () => {
 });
 
 test("fails with unexpected input", () => {
-  const a_or_b_or_c = any([character("a"), character("b"), character("c")]);
+  const a_or_b_or_c = choice([character("a"), character("b"), character("c")]);
   expect(a_or_b_or_c("x")).toStrictEqual({
     __tag: FAILURE,
     value: "Expected c but got x"
@@ -25,7 +25,7 @@ test("fails with unexpected input", () => {
 });
 
 test("fails with empty input", () => {
-  const a_or_b_or_c = any([character("a"), character("b"), character("c")]);
+  const a_or_b_or_c = choice([character("a"), character("b"), character("c")]);
   expect(a_or_b_or_c("")).toStrictEqual({
     __tag: FAILURE,
     value: "Expected c but got empty input"

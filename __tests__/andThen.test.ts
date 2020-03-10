@@ -1,9 +1,9 @@
-import { SUCCESS, FAILURE, character, and } from "..";
+import { SUCCESS, FAILURE, character, andThen } from "..";
 
 test("succeeds", () => {
   const a = character("a");
   const b = character("b");
-  const ab = and(a, b);
+  const ab = andThen(a, b);
   expect(ab("ab")).toStrictEqual({
     __tag: SUCCESS,
     value: [["a", "b"], ""]
@@ -13,7 +13,7 @@ test("succeeds", () => {
 test("fails with unexpected input", () => {
   const a = character("a");
   const b = character("b");
-  const ab = and(a, b);
+  const ab = andThen(a, b);
   expect(ab("xb")).toStrictEqual({
     __tag: FAILURE,
     value: "Expected a but got x"
@@ -27,7 +27,7 @@ test("fails with unexpected input", () => {
 test("fails with empty input", () => {
   const a = character("a");
   const b = character("b");
-  const ab = and(a, b);
+  const ab = andThen(a, b);
   expect(ab("")).toStrictEqual({
     __tag: FAILURE,
     value: "Expected a but got empty input"

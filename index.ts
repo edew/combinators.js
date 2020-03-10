@@ -32,7 +32,7 @@ export const character = (expected: string): Parser<string> => (
   return success([expected, input.slice(1)]);
 };
 
-export const and = <T, T2>(
+export const andThen = <T, T2>(
   parser1: Parser<T>,
   parser2: Parser<T2>
 ): Parser<Tuple<T, T2>> => input => {
@@ -56,7 +56,7 @@ export const and = <T, T2>(
   }
 };
 
-export const or = <T>(
+export const orElse = <T>(
   parser1: Parser<T>,
   parser2: Parser<T>
 ): Parser<T> => input => {
@@ -69,8 +69,12 @@ export const or = <T>(
   return parser2(input);
 };
 
-export const any = <T>(parsers: Parser<T>[]) => {
-  return parsers.reduce(or);
+export const choice = <T>(parsers: Parser<T>[]) => {
+  return parsers.reduce(orElse);
+};
+
+export const anyOf = (characters: string[]) => {
+  return choice(characters.map(character));
 };
 
 export const map = <T, T2>(f: (value: T) => T2) => (
@@ -91,7 +95,9 @@ export const ret = <T>(value: T): Parser<T> => (input: string) =>
 export const apply = <T, T2>(parser1: Parser<(_: T) => T2>) => (
   parser2: Parser<T>
 ): Parser<T2> => {
-  return map(([f, x]: Tuple<(_: T) => T2, T>) => f(x))(and(parser1, parser2));
+  return map(([f, x]: Tuple<(_: T) => T2, T>) => f(x))(
+    andThen(parser1, parser2)
+  );
 };
 
 export const lift2 = <A, B, C>(f: (_: A) => (_: B) => C) => (
