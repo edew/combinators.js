@@ -94,6 +94,6 @@ export const apply = <T, T2>(parser1: Parser<(_: T) => T2>) => (
   return map(([f, x]: Tuple<(_: T) => T2, T>) => f(x))(and(parser1, parser2));
 };
 
-export const map2 = <A, B, C>(f: (_: A) => (_: B) => C) => (
+export const lift2 = <A, B, C>(f: (_: A) => (_: B) => C) => (
   parser1: Parser<A>
 ) => (parser2: Parser<B>) => apply(apply(ret(f))(parser1))(parser2);
