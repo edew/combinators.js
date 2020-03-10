@@ -118,3 +118,20 @@ export const str = (expected: string): Parser<string> => {
     sequence(expected.split("").map(character))
   );
 };
+
+export const many = <T>(parser: Parser<T>): Parser<T[]> => (input: string) => {
+  const zeroOrMore = (parser: Parser<T>, input: string): Tuple<T[], string> => {
+    const firstResult = parser(input);
+
+    if (firstResult.__tag === FAILURE) {
+      return [[], input];
+    }
+
+    const [firstValue, inputAfterFirstParse] = firstResult.value;
+    const subsequentResult = zeroOrMore(parser, inputAfterFirstParse);
+    const [subsequentValues, remainingInput] = subsequentResult;
+    return [[firstValue].concat(subsequentValues), remainingInput];
+  };
+
+  return success(zeroOrMore(parser, input));
+};
