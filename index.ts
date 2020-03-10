@@ -11,6 +11,8 @@ export type Result<T> =
       value: string;
     };
 
+type Maybe<T> = undefined | T;
+
 type Tuple<A, B> = [A, B];
 
 type Parser<T> = (value: string) => Result<Tuple<T, string>>;
@@ -155,6 +157,18 @@ export const many1 = <T>(parser: Parser<T>): Parser<T[]> => input => {
   return success([values, remainingInput]);
 };
 
-export const integer = map<string[], number>(digits =>
-  parseInt(digits.join(""))
-)(many1(anyOf(["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"])));
+export const opt = <T>(parser: Parser<T>): Parser<Maybe<T>> => {
+  return orElse<Maybe<T>>(parser, ret<undefined>(undefined));
+};
+
+export const integer = map<[Maybe<string>, string[]], number>(
+  ([sign, digits]) => {
+    const parsed = parseInt(digits.join(""));
+    return sign ? -parsed : parsed;
+  }
+)(
+  andThen(
+    opt(character("-")),
+    many1(anyOf(["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]))
+  )
+);

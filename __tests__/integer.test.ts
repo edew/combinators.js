@@ -13,6 +13,10 @@ test("succeeds", () => {
     __tag: SUCCESS,
     value: [123456789, ""]
   });
+  expect(integer("-1")).toStrictEqual({
+    __tag: SUCCESS,
+    value: [-1, ""]
+  });
 });
 
 test("fails with unexpected input", () => {
