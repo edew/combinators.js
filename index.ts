@@ -119,19 +119,38 @@ export const str = (expected: string): Parser<string> => {
   );
 };
 
+const zeroOrMore = <T>(
+  parser: Parser<T>,
+  input: string
+): Tuple<T[], string> => {
+  const firstResult = parser(input);
+
+  if (firstResult.__tag === FAILURE) {
+    return [[], input];
+  }
+
+  const [firstValue, inputAfterFirstParse] = firstResult.value;
+  const subsequentResult = zeroOrMore(parser, inputAfterFirstParse);
+  const [subsequentValues, remainingInput] = subsequentResult;
+  return [[firstValue].concat(subsequentValues), remainingInput];
+};
+
 export const many = <T>(parser: Parser<T>): Parser<T[]> => (input: string) => {
-  const zeroOrMore = (parser: Parser<T>, input: string): Tuple<T[], string> => {
-    const firstResult = parser(input);
-
-    if (firstResult.__tag === FAILURE) {
-      return [[], input];
-    }
-
-    const [firstValue, inputAfterFirstParse] = firstResult.value;
-    const subsequentResult = zeroOrMore(parser, inputAfterFirstParse);
-    const [subsequentValues, remainingInput] = subsequentResult;
-    return [[firstValue].concat(subsequentValues), remainingInput];
-  };
-
   return success(zeroOrMore(parser, input));
+};
+
+export const many1 = <T>(parser: Parser<T>): Parser<T[]> => input => {
+  const firstResult = parser(input);
+
+  if (firstResult.__tag === FAILURE) {
+    return firstResult;
+  }
+
+  const [firstValue, inputAfterFirstParse] = firstResult.value;
+  const [subsequentValues, remainingInput] = zeroOrMore(
+    parser,
+    inputAfterFirstParse
+  );
+  const values = [firstValue].concat(subsequentValues);
+  return success([values, remainingInput]);
 };
