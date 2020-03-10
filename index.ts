@@ -154,3 +154,7 @@ export const many1 = <T>(parser: Parser<T>): Parser<T[]> => input => {
   const values = [firstValue].concat(subsequentValues);
   return success([values, remainingInput]);
 };
+
+export const integer = map<string[], number>(digits =>
+  parseInt(digits.join(""))
+)(many1(anyOf(["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"])));
