@@ -11,6 +11,8 @@ export type Result<T> =
       value: string;
     };
 
+type Maybe<T> = T | undefined;
+
 type Tuple<A, B> = [A, B];
 
 type Parser<T> = (value: string) => Result<Tuple<T, string>>;
