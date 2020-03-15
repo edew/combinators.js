@@ -1,4 +1,4 @@
-import { character, SUCCESS, FAILURE, many1, anyOf, map } from "..";
+import { character, SUCCESS, FAILURE, many1 } from "..";
 
 test("succeeds", () => {
   const spaces = many1(character(" "));

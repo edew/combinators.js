@@ -1,4 +1,4 @@
-import { andThen, character, SUCCESS, many, integer, opt } from "..";
+import { character, SUCCESS, integer, opt } from "..";
 
 test("succeeds", () => {
   const maybeX = opt(character("x"));
