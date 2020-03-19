@@ -41,9 +41,20 @@ const anyOf = characters => choice(characters.map(character));
 
 const ret = value => input => success([value, input]);
 
+const map = (f, parser) => input => {
+  const result = parser(input);
+
+  if (!result.success) return result;
+
+  const [parsed, remainingInput] = result.value;
+
+  return success([f(parsed), remainingInput]);
+};
+
 module.exports = {
   character,
   andThen,
   orElse,
   ret,
+  map,
 };
