@@ -39,9 +39,11 @@ const choice = parsers => parsers.reduce(orElse);
 
 const anyOf = characters => choice(characters.map(character));
 
+const ret = value => input => success([value, input]);
+
 module.exports = {
   character,
   andThen,
   orElse,
-  anyOf
+  ret,
 };
