@@ -51,10 +51,14 @@ const map = (f, parser) => input => {
   return success([f(parsed), remainingInput]);
 };
 
+const apply = (fParser, parser) =>
+  map(([f, x]) => f(x), andThen(fParser, parser));
+
 module.exports = {
   character,
   andThen,
   orElse,
   ret,
   map,
+  apply
 };
