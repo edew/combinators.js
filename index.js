@@ -35,9 +35,7 @@ const orElse = (parser1, parser2) => input => {
   return result1;
 };
 
-const choice = parsers => parsers.reduce(orElse);
-
-const anyOf = characters => choice(characters.map(character));
+const anyOf = (parsers) => parsers.reduce(orElse);
 
 const ret = value => input => success([value, input]);
 
@@ -60,5 +58,6 @@ module.exports = {
   orElse,
   ret,
   map,
-  apply
+  apply,
+  anyOf,
 };
